@@ -15,7 +15,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 app.use(cors());
 app.use(express.json());
 
-// API endpoint to handle birthday wishes submission
+// API endpoint to handle birthday wishes submission (POST)
 app.post('/api/wishes', async (req, res) => {
   const { name, message } = req.body;
 
@@ -38,6 +38,32 @@ app.post('/api/wishes', async (req, res) => {
   } catch (error) {
     console.error('Error inserting data:', error.message);
     res.status(500).json({ error: 'Failed to submit birthday wish' });
+  }
+});
+
+// API endpoint to retrieve a wish by user name (GET)
+app.get('/api/wishes/:name', async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    // Fetch data from the Supabase table by name
+    const { data, error } = await supabase
+      .from('wishes')
+      .select('name, message')
+      .eq('name', name);
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.length === 0) {
+      return res.status(404).json({ error: 'Wish not found for the given name' });
+    }
+
+    res.status(200).json({ message: 'Wish retrieved successfully!', data });
+  } catch (error) {
+    console.error('Error retrieving data:', error.message);
+    res.status(500).json({ error: 'Failed to retrieve wish' });
   }
 });
 
