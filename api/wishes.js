@@ -1,10 +1,11 @@
+// api/wishes.js
+
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Supabase setup
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -67,7 +68,5 @@ app.get('/api/wishes/:name', async (req, res) => {
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Export the serverless function handler
+module.exports = app;
