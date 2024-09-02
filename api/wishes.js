@@ -1,32 +1,26 @@
-// api/wishes.js
-
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
 // Supabase setup
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
 // API endpoint to handle birthday wishes submission (POST)
 app.post('/api/wishes', async (req, res) => {
   const { name, message } = req.body;
 
-  // Validate request data
   if (!message || message.trim() === '') {
     return res.status(400).json({ error: 'Message is required' });
   }
 
   try {
-    // Insert data into the Supabase table
     const { data, error } = await supabase
       .from('wishes')
       .insert([{ name: name || 'Anonymous', message }]);
@@ -47,7 +41,6 @@ app.get('/api/wishes/:name', async (req, res) => {
   const { name } = req.params;
 
   try {
-    // Fetch data from the Supabase table by name
     const { data, error } = await supabase
       .from('wishes')
       .select('name, message')
@@ -68,5 +61,5 @@ app.get('/api/wishes/:name', async (req, res) => {
   }
 });
 
-// Export the serverless function handler
+// Vercel handler
 module.exports = app;
