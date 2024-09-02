@@ -61,5 +61,5 @@ app.get('/api/wishes/:name', async (req, res) => {
   }
 });
 
-// Vercel handler
-module.exports = app;
+// Export the handler function for Vercel
+module.exports = (req, res) => app(req, res);
